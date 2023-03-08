@@ -8,7 +8,7 @@
 const express = require('express');
 const handlebars = require('express-handlebars');
 const helpers = require('./utils/helpers');
-const path =  require('path');
+const path = require('path');
 const session = require('express-session')
 const app = express();
 const PORT = process.env.port || 3001;
@@ -25,9 +25,9 @@ const sess = {
     store: new SequelizeStore({
         db: sequelize,
     }),
-  };
+};
 
-  app.use(session(sess));
+app.use(session(sess));
 
 const hbs = exphbs.create({ helpers })
 
