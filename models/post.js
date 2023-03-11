@@ -1,42 +1,66 @@
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/connection');
-const bcrypt = require('bcrypt');
+const express = require('express');
+const sequelize = require('sequelize');
+const router = express.Router();
+const { Op } = require('sequelize');
+const { Post, User, Comment } = require('../models');
+const withAuth = require('../utils/auth');
 
-class Post extends Model {} 
+router.get('/', withAuth, async (req, res) => {
+    try {
+        const dbPostData = await Post.findAll({
+            where: {
+                user_id: req.session.user_id,
+            },
+            include: [
+                {
+                    model: Comment,
+                    include: User,
+                },
+                User,
+            ],
+            order: [['created_at', 'DESC']],
+        });
+        
+        const posts = dbPostData.map(post => post.toJSON());
 
-Post.init(
-    {
-        id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            primaryKey: true,
-            autoIncrement: true
-        },
-        title: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        post_text: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                len: [1]
-            }
-        },
-        user_id: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'user',
-                key: 'id'
-            }
-        }
-    },
-    {
-        sequelize,
-        freezeTableName: true,
-        underscored: true,
-        modelName: 'post'
+        res.render('dashboard', {
+            posts,
+            loggedIn: true,
+            username: req.session.username,
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
     }
-);
+});
 
-module.exports = Post;
+router.get('edit/:id', withAuth, async (req, res) => {
+    try {
+        const dbPostData = await Post.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Comment,
+                    include: User,
+                },
+                User,
+            ],
+        });
+
+        if (!dbPostData) {
+            res.status(404).end();
+            return;
+        }
+        const post = dbPostData.toJSON();
+        
+        res.render('edit-post', {
+            post,
+            loggedIn: true,
+            username: req.session.username,
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+});
+
+module.exports(router);
