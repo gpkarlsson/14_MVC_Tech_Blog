@@ -16,9 +16,9 @@ const controllers = require('./controllers')
 const sequelize = require('./config/connection');
 
 const sess = {
-    secret: 'Secret Key',
+    secret: 'Super secret secret',
     cookie: {
-
+        expires: 3600000
     },
     resave: false,
     saveUninitialized: true,
