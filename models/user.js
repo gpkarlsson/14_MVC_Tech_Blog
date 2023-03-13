@@ -1,10 +1,7 @@
 // Import Model and DataTypes classes as well as sequelize package
-const Sequelize = require('sequelize')
-const { Model, DataTypes } = Sequelize
-const sequelize = new Sequelize(process.env.DB, process.env.USER, process.env.PASS, {
-  host: 'localhost',
-  dialect: 'mysql'
-});
+
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/connection');
 const bcrypt = require('bcrypt');
 
 // Import bcrypt module for hashing user password
@@ -48,6 +45,7 @@ User.init(
     isAdmin: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      default: false,
     },
   },
   {
@@ -69,4 +67,4 @@ User.init(
   }, 
 )
 
-module.exports = User
+module.exports = User;

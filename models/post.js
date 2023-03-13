@@ -1,12 +1,8 @@
 const { Model, DataTypes } = require('sequelize');
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize(process.env.DB, process.env.USER, process.env.PASS, {
-    host: 'localhost',
-    dialect: 'mysql'
-  });
+const sequelize = require('../config/connection');
+
 const express  = require('express');
 const router = express.Router();
-const { User, Comment } = require('../models');
 const withAuth = require('../utils/auth');
 
 class Post extends Model {}
