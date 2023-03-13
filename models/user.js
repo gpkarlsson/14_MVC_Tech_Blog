@@ -1,8 +1,14 @@
 // Import Model and DataTypes classes as well as sequelize package
-const {Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/connection');
-// Import bcrypt module for hashing user password
+const Sequelize = require('sequelize')
+const { Model, DataTypes } = Sequelize
+const sequelize = new Sequelize(process.env.DB, process.env.USER, process.env.PASS, {
+  host: 'localhost',
+  dialect: 'mysql'
+});
 const bcrypt = require('bcrypt');
+
+// Import bcrypt module for hashing user password
+
 
 class User extends Model {
   async hashPassword() {
@@ -56,7 +62,7 @@ User.init(
         }
       }
     },
-    sequelize,
+    sequelize: sequelize,
     modelName: 'user',
     freezeTableName: true,
     underscored: true,

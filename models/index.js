@@ -1,7 +1,7 @@
 // Importing all models
 const Comment = require('./comment');
 const Post = require('./post');
-const User = require('./user');
+const User = require('./user')
 
 // Creating associations
 Post.belongsTo(User, {

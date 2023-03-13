@@ -1,6 +1,7 @@
 const router = require('express').Router();
-const { User, Post, Comment } = require('../../models');
+const { Post, Comment } = require('../../models');
 
+class User extends Model {}
 // Get All Users
 router.get('/', async (req, res) => {
     try {

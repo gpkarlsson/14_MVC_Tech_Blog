@@ -1,68 +1,45 @@
-const express = require('express');
-const sequelize = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(process.env.DB, process.env.USER, process.env.PASS, {
+    host: 'localhost',
+    dialect: 'mysql'
+  });
+const express  = require('express');
 const router = express.Router();
-const { Op } = require('sequelize');
 const { User, Comment } = require('../models');
 const withAuth = require('../utils/auth');
 
 class Post extends Model {}
-
-router.get('/', withAuth, async (req, res) => {
-    try {
-        const dbPostData = await Post.findAll({
-            where: {
-                user_id: req.session.user_id,
+Post.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+            content: {
+                type: DataTypes.STRING(5000),
+                allowNull: false,
             },
-            include: [
-                {
-                    model: Comment,
-                    include: User,
-                },
-                User,
-            ],
-            order: [['created_at', 'DESC']],
-        });
-        
-        const posts = dbPostData.map(post => post.toJSON());
-
-        res.render('dashboard', {
-            posts,
-            loggedIn: true,
-            username: req.session.username,
-        });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json(err);
-    }
-});
-
-router.get('edit/:id', withAuth, async (req, res) => {
-    try {
-        const dbPostData = await Post.findByPk(req.params.id, {
-            include: [
-                {
-                    model: Comment,
-                    include: User,
-                },
-                User,
-            ],
-        });
-
-        if (!dbPostData) {
-            res.status(404).end();
-            return;
-        }
-        const post = dbPostData.toJSON();
-        
-        res.render('edit-post', {
-            post,
-            loggedIn: true,
-            username: req.session.username,
-        });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json(err);
-    }
-});
-
-module.exports = router;
+            author_id: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'user',
+                    key: 'id'
+            },
+        },
+    },
+    {
+        sequelize, 
+        freezeTableName: true,
+        underscored: true,
+        modelName: 'post',
+    },
+);
+module.exports = Post;
