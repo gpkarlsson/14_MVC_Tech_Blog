@@ -1,0 +1,27 @@
+<section>
+    <h2>New Post</h2>
+
+    <form class="newpostform">
+        <div>
+            <label for="title-post">Title</label>
+            <input type="text" id ="title-post" name="title-post">
+            <textarea name="text-post" name="text-post"></textarea>
+        </div>
+        <button type="submit" class="btn"></button>
+    </form>
+</section>
+{{#if posts.length}}
+<section>
+    <h2>Posts</h2>
+        <ul>
+            {{#each posts as |post|}}
+            <li>
+                {{> post-info post}}
+                <a href="/dashboard/edit/{{post.id}}" class="edit">Edit</a>
+            </li>
+            {{/each}}
+        </ul>
+</section>
+{{/if}}
+
+<script src="../public/js/add-post.js"></script>
