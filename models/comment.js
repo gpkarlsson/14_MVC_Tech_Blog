@@ -26,8 +26,8 @@ Comment.init(
                     tableName: 'user',
                 },
                 key: 'id'
-            }
-        }
+            },
+        },
     },
     {
         sequelize,
